@@ -19,25 +19,28 @@ Instead of building one large monolithic application, the system is split into m
 
 The project consists of the following services:
 
-1. **Academic Management Service**
+1. **Identity Service**
+   - Handles authentication, authorization, role management, JWT token issuance, and user identity lifecycle.
+
+2. **Academic Management Service**
    - Manages grades, classes, subjects, streams, timetables, and enrollments.
 
-2. **Homework & Assessment Service**
+3. **Homework & Assessment Service**
    - Handles assignment creation, submissions, grading, feedback, and result publishing.
 
-3. **Group Activities Service**
+4. **Group Activities Service**
    - Supports group projects, memberships, peer evaluation, and shared submissions.
 
-4. **Learning Materials Service**
+5. **Learning Materials Service**
    - Manages notes, PDFs, videos, links, and learning resources.
 
-5. **Communication & Student Support Service**
+6. **Communication & Student Support Service**
    - Handles notices, alerts, messages, and support-related communication.
 
-6. **Monitoring & Administration Service**
+7. **Monitoring & Administration Service**
    - Provides dashboards, reports, risk indicators, and analytics for school leadership.
 
-7. **API Gateway**
+8. **API Gateway**
    - Central entry point for routing requests to all services.
 
 ## Key Functionalities
@@ -81,6 +84,7 @@ This project follows the **microservices architecture pattern**.
 EduSphere-Microservices/
 │
 ├── api-gateway/
+├── identity-service/
 ├── academic-management-service/
 ├── homework-assessment-service/
 ├── group-activities-service/
@@ -101,6 +105,7 @@ cd EduSphere-Microservices
 
 ## Example Service Ports
 - **API Gateway:** http://localhost:8080
+- **Identity Service:** http://localhost:4001
 - **Academic Management Service:** http://localhost:3001
 - **Homework & Assessment Service:** http://localhost:3002
 - **Group Activities Service:** http://localhost:3003
