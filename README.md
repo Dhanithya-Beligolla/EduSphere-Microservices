@@ -112,3 +112,52 @@ cd EduSphere-Microservices
 - **Learning Materials Service:** http://localhost:3004
 - **Communication & Student Support Service:** http://localhost:3005
 - **Monitoring & Administration Service:** http://localhost:3006
+
+## Current Repository Snapshot (Implemented Modules)
+
+The following modules are currently available in this repository:
+
+```bash
+EduSphere-Microservices/
+│
+├── identity-service/
+├── homework-assessment-service/
+├── EduSphere-Frontend/
+└── README.md
+```
+
+## Local Development Ports (Current)
+
+For the modules currently implemented in this repository:
+
+- **Identity Service (Docker):** http://localhost:4001
+- **Homework & Assessment Service (Docker):** http://localhost:4002
+- **Frontend (Vite dev server):** http://localhost:5173
+
+## Quick Start (Current Modules)
+
+Run each module from its own folder in a separate terminal.
+
+### Identity Service
+
+```bash
+cd identity-service
+cp .env.example .env
+docker compose up --build
+```
+
+### Homework & Assessment Service
+
+```bash
+cd homework-assessment-service
+cp .env.example .env
+docker compose up --build
+```
+
+### EduSphere Frontend
+
+```bash
+cd EduSphere-Frontend
+npm install
+npm run dev
+```
