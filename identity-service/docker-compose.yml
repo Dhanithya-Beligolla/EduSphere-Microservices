@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: identity-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: identity_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - identity_pg_data:/var/lib/postgresql/data
+
+  identity-service:
+    build: .
+    container_name: identity-service
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    ports:
+      - "4001:4001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
+
+volumes:
+  identity_pg_data:
