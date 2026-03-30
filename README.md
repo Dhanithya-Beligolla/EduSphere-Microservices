@@ -293,12 +293,12 @@ cd EduSphere-Microservices
 ## Example Service Ports
 - **API Gateway:** http://localhost:8080
 - **Identity Service:** http://localhost:4001
-- **Academic Management Service:** http://localhost:3001
-- **Homework & Assessment Service:** http://localhost:3002
-- **Group Activities Service:** http://localhost:3003
-- **Learning Materials Service:** http://localhost:3004
-- **Communication & Student Support Service:** http://localhost:3005
-- **Monitoring & Administration Service:** http://localhost:3006
+- **Homework & Assessment Service:** http://localhost:4002
+- **Group Activities Service:** http://localhost:4003
+- **Learning Materials Service:** http://localhost:4004
+- **Academic Management Service:** http://localhost:4005
+- **Communication & Student Support Service:** http://localhost:4006
+- **Monitoring & Administration Service:** http://localhost:4007
 
 ## Current Repository Snapshot (Implemented Modules)
 
