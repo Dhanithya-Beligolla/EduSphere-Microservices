@@ -9,18 +9,42 @@ detection; audit logs provide a tamper-evident trail of user actions.
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse, Response
+from sqlalchemy.orm import Session
 
 # Relative imports from sibling packages
 from ..monitoring_models.monitoring_schemas import success, error, RiskRuleRequest
-from ..monitoring_data.monitoring_mock_data import RISK_RULES, AUDIT_LOGS
+from ..monitoring_core.database import get_db
+from ..monitoring_models.monitoring_entities import AuditLog, RiskRule
 
 # ── Router setup ─────────────────────────────────────────────────────────────
 router = APIRouter(
     prefix="/api/v1",
     tags=["Risk Rules & Audit"],
 )
+
+
+def _risk_rule_to_dict(rule: RiskRule) -> dict:
+    return {
+        "ruleId": rule.rule_id,
+        "name": rule.name,
+        "condition": rule.condition,
+        "riskLevel": rule.risk_level,
+        "active": rule.active,
+        "createdAt": rule.created_at.isoformat(),
+    }
+
+
+def _audit_to_dict(item: AuditLog) -> dict:
+    return {
+        "auditId": item.audit_id,
+        "userId": item.user_id,
+        "action": item.action,
+        "resource": item.resource,
+        "timestamp": item.timestamp.isoformat(),
+        "ipAddress": item.ip_address,
+    }
 
 
 # ── Risk Rules ───────────────────────────────────────────────────────────────
@@ -34,9 +58,10 @@ router = APIRouter(
         "(e.g. 'submissionRate < 60'), a risk level, and an active flag."
     ),
 )
-async def list_risk_rules():
+async def list_risk_rules(db: Session = Depends(get_db)):
     """Return all risk rules (active and inactive)."""
-    return success(RISK_RULES)
+    rows = db.query(RiskRule).all()
+    return success([_risk_rule_to_dict(rule) for rule in rows])
 
 
 @router.post(
@@ -50,18 +75,20 @@ async def list_risk_rules():
         "The rule is immediately active unless active=false is supplied."
     ),
 )
-async def create_risk_rule(body: RiskRuleRequest):
+async def create_risk_rule(body: RiskRuleRequest, db: Session = Depends(get_db)):
     """Create a new risk rule and append it to the list."""
-    rule = {
-        "ruleId": f"RR-{str(uuid4())[:3].upper()}",
-        "name": body.name,
-        "condition": body.condition,
-        "riskLevel": body.riskLevel,
-        "active": body.active,
-        "createdAt": datetime.now(timezone.utc).isoformat(),
-    }
-    RISK_RULES.append(rule)
-    return success(rule)
+    rule = RiskRule(
+        rule_id=f"RR-{str(uuid4())[:3].upper()}",
+        name=body.name,
+        condition=body.condition,
+        risk_level=body.riskLevel,
+        active=body.active,
+        created_at=datetime.now(timezone.utc),
+    )
+    db.add(rule)
+    db.commit()
+    db.refresh(rule)
+    return success(_risk_rule_to_dict(rule))
 
 
 @router.delete(
@@ -75,12 +102,13 @@ async def create_risk_rule(body: RiskRuleRequest):
         "or 404 if the ruleId is not found."
     ),
 )
-async def deactivate_risk_rule(ruleId: str):
+async def deactivate_risk_rule(ruleId: str, db: Session = Depends(get_db)):
     """Set active=False for the given rule, or 404 if not found."""
-    for rule in RISK_RULES:
-        if rule["ruleId"] == ruleId:
-            rule["active"] = False
-            return Response(status_code=204)
+    rule = db.query(RiskRule).filter(RiskRule.rule_id == ruleId).first()
+    if rule:
+        rule.active = False
+        db.commit()
+        return Response(status_code=204)
 
     return JSONResponse(
         status_code=404,
@@ -104,10 +132,11 @@ async def get_user_activity(
         default="TCH-230",
         description="User identifier to filter audit logs, e.g. TCH-230",
     ),
+    db: Session = Depends(get_db),
 ):
     """Return audit log entries for a specific user."""
-    filtered = [log for log in AUDIT_LOGS if log["userId"] == userId]
-    return success(filtered)
+    logs = db.query(AuditLog).filter(AuditLog.user_id == userId).all()
+    return success([_audit_to_dict(item) for item in logs])
 
 
 @router.post(
@@ -120,15 +149,17 @@ async def get_user_activity(
         "an auditId and timestamp."
     ),
 )
-async def create_audit_entry(body: dict):
+async def create_audit_entry(body: dict, db: Session = Depends(get_db)):
     """Create a new audit log entry from the supplied dict."""
-    entry = {
-        "auditId": f"AUD-{str(uuid4())[:4].upper()}",
-        "userId": body.get("userId", "UNKNOWN"),
-        "action": body.get("action", "UNKNOWN"),
-        "resource": body.get("resource", ""),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "ipAddress": "0.0.0.0",  # placeholder for mock
-    }
-    AUDIT_LOGS.append(entry)
-    return success(entry)
+    entry = AuditLog(
+        audit_id=f"AUD-{str(uuid4())[:4].upper()}",
+        user_id=body.get("userId", "UNKNOWN"),
+        action=body.get("action", "UNKNOWN"),
+        resource=body.get("resource", ""),
+        timestamp=datetime.now(timezone.utc),
+        ip_address=body.get("ipAddress", "0.0.0.0"),
+    )
+    db.add(entry)
+    db.commit()
+    db.refresh(entry)
+    return success(_audit_to_dict(entry))
