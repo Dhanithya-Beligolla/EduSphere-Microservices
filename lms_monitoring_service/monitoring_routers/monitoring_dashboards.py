@@ -6,22 +6,28 @@ Each dashboard returns aggregated, read-only data tailored to a specific
 school role: Principal, Sectional Head, Class Teacher, or Subject Teacher.
 """
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
 
 # Relative imports from sibling packages
 from ..monitoring_models.monitoring_schemas import success
-from ..monitoring_data.monitoring_mock_data import (
-    PRINCIPAL_DASHBOARD,
-    SECTIONAL_HEAD_DASHBOARD,
-    CLASS_TEACHER_DASHBOARD,
-    SUBJECT_TEACHER_DASHBOARD,
-)
+from ..monitoring_core.database import get_db
+from ..monitoring_models.monitoring_entities import DashboardRecord
 
 # ── Router setup ─────────────────────────────────────────────────────────────
 router = APIRouter(
     prefix="/api/v1/dashboards",
     tags=["Dashboards"],
 )
+
+
+def _get_dashboard_payload(db: Session, dashboard_type: str) -> dict:
+    record = (
+        db.query(DashboardRecord)
+        .filter(DashboardRecord.dashboard_type == dashboard_type)
+        .first()
+    )
+    return record.payload if record else {}
 
 
 # ── Principal Dashboard ─────────────────────────────────────────────────────
@@ -38,9 +44,9 @@ router = APIRouter(
         "The Principal role has visibility over the entire school."
     ),
 )
-async def get_principal_dashboard():
+async def get_principal_dashboard(db: Session = Depends(get_db)):
     """Return whole-school KPIs for the Principal."""
-    return success(PRINCIPAL_DASHBOARD)
+    return success(_get_dashboard_payload(db, "principal"))
 
 
 # ── Sectional Head Dashboard ────────────────────────────────────────────────
@@ -62,10 +68,12 @@ async def get_sectional_head_dashboard(
         default="SEC-JUNIOR",
         description="Section identifier, e.g. SEC-PRIMARY, SEC-JUNIOR, SEC-SENIOR, SEC-AL",
     ),
+    db: Session = Depends(get_db),
 ):
     """Return section-level KPIs for a Sectional Head."""
     # Clone the mock data and update the sectionId to reflect the query param
-    data = {**SECTIONAL_HEAD_DASHBOARD, "sectionId": sectionId}
+    base = _get_dashboard_payload(db, "sectional_head")
+    data = {**base, "sectionId": sectionId}
     return success(data)
 
 
@@ -87,9 +95,11 @@ async def get_class_teacher_dashboard(
         default="CLS-G09-A",
         description="Class identifier, e.g. CLS-G09-A",
     ),
+    db: Session = Depends(get_db),
 ):
     """Return class-level KPIs for a Class Teacher."""
-    data = {**CLASS_TEACHER_DASHBOARD, "classId": classId}
+    base = _get_dashboard_payload(db, "class_teacher")
+    data = {**base, "classId": classId}
     return success(data)
 
 
@@ -116,10 +126,12 @@ async def get_subject_teacher_dashboard(
         default="SCI",
         description="Subject identifier, e.g. SCI, MAT, ENG, HIS",
     ),
+    db: Session = Depends(get_db),
 ):
     """Return subject-level KPIs for a Subject Teacher."""
+    base = _get_dashboard_payload(db, "subject_teacher")
     data = {
-        **SUBJECT_TEACHER_DASHBOARD,
+        **base,
         "classId": classId,
         "subjectId": subjectId,
     }

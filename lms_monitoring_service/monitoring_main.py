@@ -5,16 +5,21 @@ FastAPI application entry-point for the LMS Monitoring & Administration
 Service (Service 06 of 6 in the LMS microservices architecture).
 
 Run with:
-    uvicorn monitoring_main:app --reload --port 8006
+    uvicorn lms_monitoring_service.monitoring_main:app --reload --port 4007
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.responses import JSONResponse
 
 # Relative imports for the three routers
 from .monitoring_routers.monitoring_dashboards import router as dashboards_router
 from .monitoring_routers.monitoring_reports import router as reports_router
 from .monitoring_routers.monitoring_risk_audit import router as risk_audit_router
+from .monitoring_core.config import settings
+from .monitoring_core.database import Base, SessionLocal, engine
+from .monitoring_data.monitoring_seed import seed_initial_data
 
 # ── Application factory ─────────────────────────────────────────────────────
 
@@ -27,12 +32,12 @@ app = FastAPI(
         "all five upstream micro­services:\n\n"
         "| # | Service | Port |\n"
         "|---|---------|------|\n"
-        "| 01 | Academic Management | 8001 |\n"
-        "| 02 | Homework & Assessment | 8002 |\n"
-        "| 03 | Group Activities | 8003 |\n"
-        "| 04 | Learning Materials | 8004 |\n"
-        "| 05 | Communication & Student Support | 8005 |\n"
-        "| **06** | **Monitoring & Administration** | **8006** |\n\n"
+        "| 01 | Academic Management | 3001 |\n"
+        "| 02 | Homework & Assessment | 3002 |\n"
+        "| 03 | Group Activities | 3003 |\n"
+        "| 04 | Learning Materials | 3004 |\n"
+        "| 05 | Communication & Student Support | 3005 |\n"
+        "| **06** | **Monitoring & Administration** | **4007** |\n\n"
         "### Key capabilities\n"
         "- **Role-based dashboards** for Principal, Sectional Head, "
         "Class Teacher, and Subject Teacher — each role sees only the "
@@ -75,6 +80,21 @@ app.add_middleware(
 app.include_router(dashboards_router)
 app.include_router(reports_router)
 app.include_router(risk_audit_router)
+
+
+@app.get("/api-docs", include_in_schema=False)
+async def swagger_docs_alias():
+    """Serve Swagger UI at /api-docs for consistency across services."""
+    return get_swagger_ui_html(
+        openapi_url="/api-docs.json",
+        title="LMS Monitoring Service API Docs",
+    )
+
+
+@app.get("/api-docs.json", include_in_schema=False)
+async def swagger_openapi_alias():
+    """Serve OpenAPI JSON at /api-docs.json for tooling integration."""
+    return JSONResponse(app.openapi())
 
 
 # ── Root & health endpoints ─────────────────────────────────────────────────
@@ -121,5 +141,15 @@ async def health():
     return {
         "status": "healthy",
         "service": "monitoring-service",
-        "port": 8006,
+        "port": settings.port,
     }
+
+
+@app.on_event("startup")
+def startup_db() -> None:
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        seed_initial_data(db)
+    finally:
+        db.close()
