@@ -4,7 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const swaggerUi = require('swagger-ui-express');
 const routes = require('./routes');
+const swaggerSpec = require('./docs/swagger');
 const errorMiddleware = require('./middlewares/error.middleware');
 const { sendSuccess } = require('./utils/response');
 
@@ -20,6 +22,12 @@ app.get('/health', (req, res) => {
   return sendSuccess(res, 200, 'Identity service is healthy', {
     service: 'identity-service'
   });
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
 });
 
 app.use(routes);
