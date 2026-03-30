@@ -1,24 +1,99 @@
-# EduSphere-Microservices
+# Learning Materials Microservice
 
-A microservices-based Learning Management System (LMS) designed for a school environment.  
-This project was developed as part of the **IT4020 – Modern Topics in IT** module.
+A production-grade backend microservice for managing digital learning materials in a Sri Lankan school LMS. Built with **FastAPI**, **MongoDB** (Motor async driver), and **Python 3.12**.
 
-## Project Overview
+## Architecture
 
-EduSphere-Microservices is a distributed backend system built using **microservices architecture** to support key school operations such as academic management, homework and assessments, group activities, learning materials, communication, and monitoring.
+```
+Route Module → Service Layer → Repository Layer → MongoDB
+```
 
-The system is designed to reflect a real-world school hierarchy, where principals, sectional heads, class teachers, subject teachers, students, and parents interact with different parts of the platform based on their roles and permissions.
+Each layer has a clear responsibility:
+- **Routes**: Declare endpoints, validate input via Pydantic, call services, return standard envelopes
+- **Services**: Implement business rules, lifecycle transitions, authorization checks, event publishing
+- **Repositories**: Isolate MongoDB queries, provide pagination and search
 
-## Project Type
+### Project Structure
 
-This is a **microservices-based backend project**.
+```
+app/
+├── main.py                  # FastAPI bootstrap, lifespan, exception handlers
+├── core/
+│   ├── config.py            # pydantic-settings configuration
+│   ├── constants.py         # Enums: Status, ResourceType, Medium, Role
+│   ├── dependencies.py      # Auth dependencies (JWT-based)
+│   ├── exceptions.py        # Domain-specific exceptions
+│   ├── logging.py           # structlog configuration
+│   ├── middleware.py         # Correlation ID + request logging
+│   └── security.py          # JWT decode + TokenClaims
+├── api/
+│   ├── router.py            # Central router registry
+│   └── routes/
+│       ├── health.py        # GET /health, GET /ready
+│       ├── materials.py     # CRUD + lifecycle endpoints
+│       ├── versions.py      # Version sub-resource
+│       ├── visibility.py    # Visibility GET/PATCH
+│       ├── download.py      # Download URL stub
+│       ├── search.py        # Full-text search
+│       ├── analytics.py     # Analytics stub
+│       └── ai_tools.py      # AI-assisted endpoints
+├── schemas/                 # Pydantic v2 request/response models
+├── models/                  # MongoDB document factories
+├── services/                # Business logic
+├── repositories/            # MongoDB query layer
+├── agents/                  # Deterministic AI agents
+│   ├── metadata_agent.py    # Tag suggestions, title normalization
+│   ├── classification_agent.py  # Resource type classification
+│   ├── compliance_agent.py  # Publish readiness checks
+│   └── orchestrator.py      # Agent routing
+├── events/                  # Domain events + pluggable publisher
+│   ├── base.py              # EventPublisher ABC
+│   ├── material_events.py   # Typed event factories
+│   └── publishers/          # noop + log implementations
+├── db/
+│   ├── mongo.py             # Motor client lifecycle (lifespan)
+│   └── indexes.py           # Index definitions
+└── utils/                   # Helpers (pagination, response, ObjectId)
 
-Instead of building one large monolithic application, the system is split into multiple independent services. Each service handles a specific business domain and communicates through APIs. An **API Gateway** is used as the single entry point to access all microservices.
+tests/                       # pytest + httpx async tests
+scripts/
+└── seed.py                  # Sample data seeder
+```
 
-## Core Microservices
+## Quick Start
 
-The project consists of the following services:
+### Prerequisites
+- Python 3.12+
+- MongoDB 7+ (local or Atlas)
 
+### 1. Clone and install
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate       # Windows
+# source venv/bin/activate  # Mac/Linux
+pip install -r requirements.txt
+```
+
+### 2. Configure environment
+
+```bash
+copy .env.example .env
+# Edit .env with your MongoDB URI if needed
+```
+
+### 3. Start MongoDB (Docker)
+
+```bash
+docker-compose up mongodb -d
+```
+
+### 4. Seed sample data
+
+```bash
+python -m scripts.seed
+```
 1. **Identity Service**
    - Handles authentication, authorization, role management, JWT token issuance, and user identity lifecycle.
 
@@ -43,44 +118,82 @@ The project consists of the following services:
 8. **API Gateway**
    - Central entry point for routing requests to all services.
 
-## Key Functionalities
-
-- School structure management
-- Class and subject allocation
-- Homework and assessment lifecycle
-- Student submissions and grading
-- Group-based activities and peer assessment
-- Learning material publishing and access control
-- School-wide and class-level communication
-- Monitoring dashboards and reporting
-- Centralized API access through gateway
-- Swagger API documentation for each service
-
-## Architecture Style
-
-This project follows the **microservices architecture pattern**.
-
-### Main characteristics:
-- Independent services for each business domain
-- Separate responsibilities for each service
-- API-based communication
-- Centralized API Gateway
-- Scalable and modular design
-- Easier maintenance and future extension
-
-## Tech Stacks
-
-- **Backend:** Node.js, Express.js, python, FastAPI
-- **FrontEnd:** React 
-- **API Gateway:** Express Gateway / custom Express gateway
-- **Database:** MongoDB / PostgreSQL
-- **Documentation:** Swagger
-- **Testing:** Postman
-- **Version Control:** Git & GitHub
-
-## Project Structure
+### 5. Run the server
 
 ```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### 6. View API docs
+
+Open http://localhost:8000/docs (Swagger UI) or http://localhost:8000/redoc (ReDoc)
+
+## Docker
+
+```bash
+docker-compose up --build
+```
+
+## Running Tests
+
+```bash
+pytest tests/ -v
+```
+
+## JWT Development Strategy
+
+This service does **not** implement login. It expects a valid JWT Bearer token from an external identity provider. For local development:
+
+### Generate a test token
+
+```python
+import jwt
+from datetime import datetime, timedelta
+
+token = jwt.encode(
+    {
+        "sub": "teacher-001",
+        "school_id": "school-001",
+        "roles": ["SUBJECT_TEACHER"],
+        "subject_ids": ["subject-science"],
+        "class_ids": ["class-9a"],
+        "section_ids": [],
+        "stream_ids": [],
+        "permissions": [],
+        "exp": datetime.utcnow() + timedelta(hours=24),
+        "iat": datetime.utcnow(),
+    },
+    "dev-secret-change-in-production",  # Must match JWT_SECRET in .env
+    algorithm="HS256",
+)
+print(token)
+```
+
+### Sample curl commands
+
+**Create a material:**
+```bash
+curl -X POST http://localhost:8000/api/v1/materials \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Grade 9 Science Revision Notes",
+    "description": "Complete revision notes for Term 1",
+    "resourceType": "PDF",
+    "subjectId": "subject-science",
+    "gradeId": "grade-9",
+    "termId": "term-1",
+    "medium": "ENGLISH",
+    "tags": ["science", "revision"],
+    "fileId": "file-abc-123"
+  }'
+```
+
+**List materials:**
+```bash
+curl http://localhost:8000/api/v1/materials \
+  -H "Authorization: Bearer <TOKEN>"
+```
 EduSphere-Microservices/
 │
 ├── api-gateway/
@@ -98,7 +211,81 @@ EduSphere-Microservices/
 
 ## How to Clone the Project
 
+**Publish a material:**
 ```bash
+curl -X POST http://localhost:8000/api/v1/materials/{material_id}/publish \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+**Search materials:**
+```bash
+curl "http://localhost:8000/api/v1/materials/search?q=science&gradeId=grade-9" \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+**Suggest tags (AI):**
+```bash
+curl -X POST http://localhost:8000/api/v1/materials/{material_id}/ai/suggest-tags \
+  -H "Authorization: Bearer <TOKEN>"
+```
+
+**Health check:**
+```bash
+curl http://localhost:8000/health
+```
+
+## API Response Format
+
+All responses use a consistent envelope:
+
+```json
+{
+  "data": { ... },
+  "meta": {
+    "requestId": "uuid",
+    "timestamp": "2026-03-29T12:00:00Z",
+    "version": "v1"
+  },
+  "errors": []
+}
+```
+
+## Authorization Roles
+
+| Role | Create | Read | Update | Publish | Delete |
+|------|--------|------|--------|---------|--------|
+| ADMIN | ✅ | ✅ | ✅ | ✅ | ✅ |
+| PRINCIPAL | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DEPUTY_PRINCIPAL | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SECTIONAL_HEAD | ✅ | ✅ | ✅ | ✅ | ✅ |
+| CLASS_TEACHER | ✅ | ✅ | ✅ | ✅ | ✅ |
+| SUBJECT_TEACHER | ✅ (own subjects) | ✅ | ✅ (own subjects) | ✅ | ✅ |
+| STUDENT | ❌ | ✅ (published only) | ❌ | ❌ | ❌ |
+| PARENT | ❌ | ✅ (published only) | ❌ | ❌ | ❌ |
+
+## Material Lifecycle
+
+```
+DRAFT → PUBLISHED → DRAFT (unpublish)
+DRAFT → ARCHIVED
+PUBLISHED → ARCHIVED
+```
+
+## Feature Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `ENABLE_AGENT_FEATURES` | `false` | Enable AI-assisted endpoints (tag suggestions, classification) |
+| `EVENT_PUBLISHER` | `noop` | Event publisher: `noop` (silent) or `log` (structured logs) |
+
+## Design Decisions
+
+- **Motor** over Beanie: explicit repository pattern, no ORM magic
+- **Lifespan** context manager: FastAPI-recommended MongoDB lifecycle
+- **PyJWT** stateless parsing: auth server lives elsewhere
+- **Deterministic agents**: no LLM dependency, pure Python keyword/rule logic
+- **Soft delete**: data safety by default, auditable
+- **Pluggable events**: zero coupling, Kafka/RabbitMQ swappable via interface
 git clone https://github.com/Dhanithya-Beligolla/EduSphere-Microservices.git
 cd EduSphere-Microservices
 ```
