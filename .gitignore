@@ -147,3 +147,25 @@ cython_debug/
 
 # PyCharm
 .idea/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# MongoDB data (if using local volume)
+data/
