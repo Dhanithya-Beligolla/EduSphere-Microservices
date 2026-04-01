@@ -169,3 +169,5 @@ coverage.xml
 
 # MongoDB data (if using local volume)
 data/
+academic-lms/academic-lms-backend/node_modules/*
+academic-lms/frontend/node_modules/*
