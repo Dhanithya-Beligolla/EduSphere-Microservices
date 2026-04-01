@@ -185,12 +185,58 @@ docker compose ps
 docker compose logs -f
 ```
 
+## Full Microservice Run (Verified)
+
+Use this flow to run the entire platform from a clean state.
+
+### 1. Clean previous conflicting containers (safe for this repo stack)
+
+```bash
+docker rm -f identity-postgres assessment-postgres monitoring-postgres lms-mongodb identity-service homework-assessment-service lms-learning-materials academic-lms-backend communication-student-support-service lms-monitoring-service lms-api-gateway 2>/dev/null || true
+```
+
+### 2. Build and start all services
+
+```bash
+docker compose up -d --build
+```
+
+### 3. Verify all health endpoints through API Gateway
+
+```bash
+curl http://localhost:8080/health
+curl http://localhost:8080/identity/health
+curl http://localhost:8080/assessment/health
+curl http://localhost:8080/materials/health
+curl http://localhost:8080/communication/health
+curl http://localhost:8080/monitoring/health
+curl http://localhost:8080/academic/api/health
+```
+
+Expected result: each endpoint should return `200 OK`.
+
+### 4. Verify aggregated downstream status
+
+```bash
+curl http://localhost:8080/api/v1/gateway/services/health
+```
+
+Notes:
+- Active services should report `UP`.
+- `groups` can report `DOWN` in this repository because it is a reserved gateway route without an implemented backend service.
+
+### 5. Stop the full stack
+
+```bash
+docker compose down
+```
+
 ## Per-Service Development
 
 Each service can still be run independently for focused development.
 
 - Identity: [identity-service/README.md](identity-service/README.md)
-- Academic: [academic-lms/backend/README.md](academic-lms/backend/README.md)
+- Academic: [academic-lms/academic-lms-backend/README.md](academic-lms/academic-lms-backend/README.md)
 - Homework and Assessment: [homework-assessment-service/README.md](homework-assessment-service/README.md)
 - Learning Materials: [Learning-Materials/README.md](Learning-Materials/README.md)
 - Communication and Student Support: [communication-student-support-service/README.md](communication-student-support-service/README.md)
