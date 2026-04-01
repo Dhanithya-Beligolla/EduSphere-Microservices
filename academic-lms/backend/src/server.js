@@ -22,7 +22,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 5000}`,
+        url: `http://localhost:${process.env.PORT || 4003}`,
       },
     ],
   },
@@ -72,7 +72,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4003;
 
 const start = async () => {
   try {

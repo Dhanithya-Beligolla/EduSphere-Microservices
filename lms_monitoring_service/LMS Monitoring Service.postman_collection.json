@@ -1,0 +1,85 @@
+{
+  "info": {
+    "name": "LMS Monitoring Service",
+    "description": "Postman collection for Monitoring & Administration service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Principal Dashboard",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/dashboards/principal"
+      }
+    },
+    {
+      "name": "Sectional Head Dashboard",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/dashboards/sectional-head?sectionId=SEC-JUNIOR"
+      }
+    },
+    {
+      "name": "Assignment Completion Report",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/reports/assignment-completion?termId=TERM-1"
+      }
+    },
+    {
+      "name": "Academic Risk Report",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/reports/academic-risk?gradeId=G09"
+      }
+    },
+    {
+      "name": "Material Usage Report",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/reports/material-usage?subjectId=SCI"
+      }
+    },
+    {
+      "name": "Get KPIs",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/kpis"
+      }
+    },
+    {
+      "name": "Get Interventions",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/interventions"
+      }
+    },
+    {
+      "name": "Get Risk Rules",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/risk-rules"
+      }
+    },
+    {
+      "name": "Get User Activity Audit",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/audit-views/user-activity?userId=TCH-230"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4007"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "info": {
+    "name": "EduSphere API Gateway",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "API Gateway routes and proxied microservice requests"
+  },
+  "item": [
+    {
+      "name": "Gateway Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Gateway Routes",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/v1/gateway/routes"
+      }
+    },
+    {
+      "name": "Downstream Services Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/v1/gateway/services/health"
+      }
+    },
+    {
+      "name": "Gateway Swagger UI",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api-docs"
+      }
+    },
+    {
+      "name": "Gateway OpenAPI JSON",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api-docs.json"
+      }
+    },
+    {
+      "name": "Identity - Login (Proxy)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emailOrUsername\": \"superadmin@lms.com\",\n  \"password\": \"Super@12345\"\n}"
+        },
+        "url": "{{baseUrl}}/identity/api/v1/auth/login"
+      }
+    },
+    {
+      "name": "Assessment - Health (Proxy)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/assessment/health"
+      }
+    },
+    {
+      "name": "Materials - Health (Proxy)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/materials/health"
+      }
+    },
+    {
+      "name": "Monitoring - Principal Dashboard (Proxy)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/monitoring/api/v1/dashboards/principal"
+      }
+    },
+    {
+      "name": "Academic - Health (Proxy)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/academic/api/health"
+      }
+    },
+    {
+      "name": "Academic - Get Grades (Proxy)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/academic/api/grades"
+      }
+    },
+    {
+      "name": "Communication - Health (Proxy)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/communication/health"
+      }
+    },
+    {
+      "name": "Communication - Create Notice (Proxy)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Exam Reminder\",\n  \"content\": \"Term test starts next week\",\n  \"audience\": \"ALL\",\n  \"author_id\": \"P001\",\n  \"author_role\": \"Principal\"\n}"
+        },
+        "url": "{{baseUrl}}/communication/api/v1/notices"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}

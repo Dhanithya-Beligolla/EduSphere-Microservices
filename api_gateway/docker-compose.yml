@@ -1,0 +1,11 @@
+services:
+  api-gateway:
+    build: .
+    container_name: lms-api-gateway
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -1,0 +1,111 @@
+{
+  "info": {
+    "name": "Communication Student Support Service",
+    "description": "Postman collection for notices, messages, alerts, and support case flows",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Create Notice",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Exam Reminder\",\n  \"content\": \"Term test starts next week\",\n  \"audience\": \"ALL\",\n  \"author_id\": \"P001\",\n  \"author_role\": \"Principal\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/notices"
+      }
+    },
+    {
+      "name": "Get Notices",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/notices"
+      }
+    },
+    {
+      "name": "Send Message",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sender_id\": \"T001\",\n  \"receiver_id\": \"S001\",\n  \"content\": \"Please submit your assignment today\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/messages"
+      }
+    },
+    {
+      "name": "Get Conversation Messages",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/conversations/CONV_SAMPLE/messages"
+      }
+    },
+    {
+      "name": "Create Alert",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"user_id\": \"S001\",\n  \"type\": \"ASSIGNMENT\",\n  \"title\": \"Assignment Due\",\n  \"message\": \"Math assignment is due tomorrow\",\n  \"priority\": \"HIGH\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/alerts"
+      }
+    },
+    {
+      "name": "Get User Alerts",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/users/S001/alerts"
+      }
+    },
+    {
+      "name": "Create Support Case",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"student_id\": \"S001\",\n  \"subject\": \"Wellbeing Support\",\n  \"description\": \"Student requested counselling session\",\n  \"assigned_staff_id\": \"C001\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/support-cases"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4005"
+    }
+  ]
+}

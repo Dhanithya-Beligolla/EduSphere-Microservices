@@ -10,6 +10,6 @@ RUN pip install --no-cache-dir -r monitoring_requirements.txt
 
 COPY . /app/lms_monitoring_service
 
-EXPOSE 3006
+EXPOSE 4007
 
-CMD ["uvicorn", "lms_monitoring_service.monitoring_main:app", "--host", "0.0.0.0", "--port", "3006", "--reload"]
+CMD ["uvicorn", "lms_monitoring_service.monitoring_main:app", "--host", "0.0.0.0", "--port", "4007", "--reload"]
