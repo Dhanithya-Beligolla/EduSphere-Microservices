@@ -64,6 +64,40 @@ docker compose up --build
 docker compose down
 ```
 
+## Standalone Gateway Quick Run (Verified)
+
+Use this when running the gateway from this folder (`api_gateway`) while downstream services are running on host ports `4001` to `4007`.
+
+1. Build and start only the gateway:
+
+```bash
+docker compose up -d --build
+```
+
+2. Verify gateway and proxied service health:
+
+```bash
+curl http://localhost:8080/health
+curl http://localhost:8080/identity/health
+curl http://localhost:8080/assessment/health
+curl http://localhost:8080/materials/health
+curl http://localhost:8080/communication/health
+curl http://localhost:8080/monitoring/health
+curl http://localhost:8080/academic/api/health
+```
+
+Expected result: each endpoint should return `200 OK`.
+
+3. Verify aggregated downstream status:
+
+```bash
+curl http://localhost:8080/api/v1/gateway/services/health
+```
+
+Notes:
+- This gateway compose uses `host.docker.internal` to reach downstream services from inside the gateway container.
+- `groups` can report `DOWN` because it is currently a reserved route with no implemented backend in this repository.
+
 ## Root-Level Orchestration
 
 From repository root, start all integrated services plus gateway with one command:

@@ -130,7 +130,7 @@ services:
 
   academic-lms-backend:
     build:
-      context: ./academic-lms/backend
+      context: ./academic-lms/academic-lms-backend
     container_name: academic-lms-backend
     restart: always
     depends_on:

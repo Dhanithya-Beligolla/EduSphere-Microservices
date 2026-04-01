@@ -5,6 +5,14 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      IDENTITY_SERVICE_URL: http://host.docker.internal:4001
+      HOMEWORK_SERVICE_URL: http://host.docker.internal:4002
+      LEARNING_MATERIALS_SERVICE_URL: http://host.docker.internal:4004
+      MONITORING_SERVICE_URL: http://host.docker.internal:4007
+      ACADEMIC_SERVICE_URL: http://host.docker.internal:4003
+      COMMUNICATION_SERVICE_URL: http://host.docker.internal:4005
+      GROUP_SERVICE_URL: http://host.docker.internal:4006
     ports:
       - "8080:8080"
     extra_hosts:

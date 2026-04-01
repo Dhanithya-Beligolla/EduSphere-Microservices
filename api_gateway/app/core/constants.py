@@ -30,7 +30,7 @@ SERVICE_REGISTRY = {
     "academic": {
         "prefix": "/academic",
         "base_url": settings.academic_service_url,
-        "health_path": "/health",
+        "health_path": "/api/health",
         "display_name": "Academic Management Service",
     },
     "groups": {
