@@ -77,7 +77,9 @@ It validates bearer tokens via the Identity Service verification endpoint.
 
 ## Database Migrations
 
-Run Alembic migrations after containers are up:
+Migrations now run automatically when the service container starts.
+
+Manual migration command (optional):
 
 ```bash
 docker exec -it homework-assessment-service alembic upgrade head
