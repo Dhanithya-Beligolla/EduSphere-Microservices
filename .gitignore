@@ -113,7 +113,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -149,7 +148,6 @@ cython_debug/
 .idea/
 
 # Environment
-.env
 
 # IDE
 .vscode/
@@ -171,3 +169,5 @@ coverage.xml
 data/
 academic-lms/academic-lms-backend/node_modules/*
 academic-lms/frontend/node_modules/*
+config.bat
+node_modules
