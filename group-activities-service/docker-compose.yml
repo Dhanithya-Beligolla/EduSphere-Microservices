@@ -1,0 +1,18 @@
+services:
+  group-activities-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: group_activities_services
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    networks:
+      - lms_network
+    restart: unless-stopped
+
+networks:
+  lms_network:
+    external: true
+    name: lms_network
