@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     DB_NAME: str = "group_activities_db"
 
     # Service info
-    SERVICE_NAME: str = "group-activities-service"
+    SERVICE_NAME: str = "group-activities-services"
     SERVICE_VERSION: str = "v1"
     ENVIRONMENT: str = "development"
 

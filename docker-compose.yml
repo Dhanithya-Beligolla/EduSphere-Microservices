@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: group_activities_service
+    container_name: group_activities_services
     ports:
       - "8003:8003"
     env_file:
