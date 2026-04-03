@@ -216,3 +216,6 @@ lms_monitoring_service/.env
 identity-service/.env
 Learning-Materials/.env
 communication-student-support-service/.env
+*/.DS_Store
+academic-lms/frontend/.DS_Store
+.DS_Store
