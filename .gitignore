@@ -207,3 +207,12 @@ __marimo__/
 Monitoring & Administration Service/*
 config.bat
 node_modules
+academic-lms/academic-lms-backend/.env
+api_gateway/.env
+homework-assessment-service/.env
+.gitignore
+lms_monitoring_service/.env
+.gitignore
+identity-service/.env
+Learning-Materials/.env
+communication-student-support-service/.env
