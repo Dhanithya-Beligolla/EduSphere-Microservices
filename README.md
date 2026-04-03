@@ -2,12 +2,13 @@
 
 EduSphere is a school LMS platform implemented as domain-oriented microservices. This repository includes the active backend modules, their data stores, and a centralized API gateway.
 
-The current snapshot focuses on seven operational services:
+The current snapshot focuses on eight operational services:
 
 - Identity Service
 - Academic Management Service
 - Homework and Assessment Service
 - Learning Materials Service
+- Group Activities Service
 - Communication and Student Support Service
 - Monitoring and Administration Service
 - API Gateway
@@ -30,17 +31,17 @@ The architecture is service-first so each domain can evolve independently while 
 Clients (Web / Mobile / Admin)
             |
             v
-       API Gateway :8080
-/identity /academic /assessment /materials /communication /monitoring
-    |         |         |           |            |               |
-    v         v         v           v            v               v
-Identity   Academic   Homework    Learning   Communication   Monitoring
-Service    Service    Service     Materials  Service         Service
-:4001      :4003      :4002       :4004      :4005           :4007
-   |          |          |            |                          |
-   v          v          v            v                          v
-Postgres    MongoDB    Postgres     MongoDB                    Postgres
-:5433       :27017     :5434        :27017                     :5436
+         API Gateway :8080
+    /identity /academic /assessment /materials /groups /communication /monitoring
+      |         |         |           |        |         |               |
+      v         v         v           v        v         v               v
+    Identity   Academic   Homework    Learning  Group   Communication   Monitoring
+    Service    Service    Service     Materials Activities Service       Service
+    :4001      :4003      :4002       :4004     :4006   :4005           :4007
+       |          |          |            |        |                         |
+       v          v          v            v        v                         v
+    Postgres    MongoDB    Postgres     MongoDB  MongoDB                  Postgres
+    :5433       :27017     :5434        :27017   :27017                   :5436
 ```
 
 ## Service Catalog
@@ -66,7 +67,7 @@ Postgres    MongoDB    Postgres     MongoDB                    Postgres
   - Subject and timetable management
   - Student enrollment and promotion workflows
   - Teacher assignment management
-- Details: [academic-lms/backend/README.md](academic-lms/backend/README.md)
+- Details: [academic-lms/academic-lms-backend/README.md](academic-lms/academic-lms-backend/README.md)
 
 ### 3. Homework and Assessment Service
 
@@ -91,7 +92,19 @@ Postgres    MongoDB    Postgres     MongoDB                    Postgres
   - AI-assisted metadata and tag suggestion endpoints
 - Details: [Learning-Materials/README.md](Learning-Materials/README.md)
 
-### 5. Communication and Student Support Service
+### 5. Group Activities Service
+
+- Purpose: manage group creation, group activities, submissions, peer evaluations, and group results analytics.
+- Stack: FastAPI, Beanie, MongoDB.
+- Key capabilities:
+  - Group set creation and member role management
+  - Group activity creation and assignment workflows
+  - Group submissions and peer evaluation flows
+  - Group grading with individual score computation
+  - Class-level group performance analytics
+- Details: [group-activities-service/README.md](group-activities-service/README.md)
+
+### 6. Communication and Student Support Service
 
 - Purpose: handle notices, student-teacher messaging, alerts, and support/counselling cases.
 - Stack: FastAPI, Pydantic.
@@ -102,7 +115,7 @@ Postgres    MongoDB    Postgres     MongoDB                    Postgres
   - Support case creation and updates
 - Details: [communication-student-support-service/README.md](communication-student-support-service/README.md)
 
-### 6. Monitoring and Administration Service
+### 7. Monitoring and Administration Service
 
 - Purpose: provide school leadership dashboards, KPIs, reports, and audit views.
 - Stack: FastAPI, SQLAlchemy, PostgreSQL.
@@ -113,7 +126,7 @@ Postgres    MongoDB    Postgres     MongoDB                    Postgres
   - Audit and risk-rule workflows
 - Details: [lms_monitoring_service/README.md](lms_monitoring_service/README.md)
 
-### 7. API Gateway
+### 8. API Gateway
 
 - Purpose: single entry point for routing requests to backend services.
 - Stack: FastAPI, httpx.
@@ -133,6 +146,7 @@ Postgres    MongoDB    Postgres     MongoDB                    Postgres
 | Academic Management | Academic domain workflows | 4003 | /api/health, /api-docs |
 | Homework and Assessment | Assignment workflows | 4002 | /health, /docs |
 | Learning Materials | Learning content management | 4004 | /health, /docs |
+| Group Activities | Group collaboration workflows | 4006 | /health, /docs |
 | Communication and Student Support | Notices, messaging, support workflows | 4005 | /health, /docs |
 | Monitoring and Administration | Dashboards and reporting | 4007 | /health, /api-docs |
 | Identity PostgreSQL | Identity datastore | 5433 | n/a |
@@ -148,6 +162,7 @@ Postgres    MongoDB    Postgres     MongoDB                    Postgres
 - Academic Swagger: http://localhost:4003/api-docs
 - Homework Swagger: http://localhost:4002/docs
 - Learning Materials Swagger: http://localhost:4004/docs
+- Group Activities Swagger: http://localhost:4006/docs
 - Communication Swagger: http://localhost:4005/docs
 - Monitoring Swagger: http://localhost:4007/api-docs
 
@@ -192,7 +207,7 @@ Use this flow to run the entire platform from a clean state.
 ### 1. Clean previous conflicting containers (safe for this repo stack)
 
 ```bash
-docker rm -f identity-postgres assessment-postgres monitoring-postgres lms-mongodb identity-service homework-assessment-service lms-learning-materials academic-lms-backend communication-student-support-service lms-monitoring-service lms-api-gateway 2>/dev/null || true
+docker rm -f identity-postgres assessment-postgres monitoring-postgres lms-mongodb identity-service homework-assessment-service lms-learning-materials academic-lms-backend group-activities-service communication-student-support-service lms-monitoring-service lms-api-gateway 2>/dev/null || true
 ```
 
 ### 2. Build and start all services
@@ -208,6 +223,7 @@ curl http://localhost:8080/health
 curl http://localhost:8080/identity/health
 curl http://localhost:8080/assessment/health
 curl http://localhost:8080/materials/health
+curl http://localhost:8080/groups/health
 curl http://localhost:8080/communication/health
 curl http://localhost:8080/monitoring/health
 curl http://localhost:8080/academic/api/health
@@ -223,7 +239,6 @@ curl http://localhost:8080/api/v1/gateway/services/health
 
 Notes:
 - Active services should report `UP`.
-- `groups` can report `DOWN` in this repository because it is a reserved gateway route without an implemented backend service.
 
 ### 5. Stop the full stack
 
@@ -239,6 +254,7 @@ Each service can still be run independently for focused development.
 - Academic: [academic-lms/academic-lms-backend/README.md](academic-lms/academic-lms-backend/README.md)
 - Homework and Assessment: [homework-assessment-service/README.md](homework-assessment-service/README.md)
 - Learning Materials: [Learning-Materials/README.md](Learning-Materials/README.md)
+- Group Activities: [group-activities-service/README.md](group-activities-service/README.md)
 - Communication and Student Support: [communication-student-support-service/README.md](communication-student-support-service/README.md)
 - Monitoring: [lms_monitoring_service/README.md](lms_monitoring_service/README.md)
 - Gateway: [api_gateway/README.md](api_gateway/README.md)
@@ -247,7 +263,7 @@ Each service can still be run independently for focused development.
 
 - Service-owned datastores are isolated by domain.
 - Relational domains use PostgreSQL.
-- Content-heavy learning materials use MongoDB.
+- Academic, learning materials, and group collaboration domains use MongoDB.
 - This separation reduces coupling and allows domain-specific optimization.
 
 ## Security and Integration Notes
@@ -255,6 +271,7 @@ Each service can still be run independently for focused development.
 - JWT validation is centralized through the Identity service.
 - Homework service validates bearer tokens using Identity verification endpoints.
 - Academic service uses MongoDB-backed domain models for academic entities.
+- Group Activities service validates JWT claims and uses MongoDB-backed collaboration models.
 - Communication service currently uses in-memory mock storage for rapid prototyping.
 - Gateway forwards requests and supports service health visibility.
 - In production, replace development secrets and tighten CORS and network policies.
@@ -267,13 +284,10 @@ Active and integrated in this repository:
 - Academic Management Service
 - Homework and Assessment Service
 - Learning Materials Service
+- Group Activities Service
 - Communication and Student Support Service
 - Monitoring and Administration Service
 - API Gateway
-
-Reserved in gateway routing but not currently implemented as backend modules in this repository:
-
-- Group Activities Service
 
 ## Repository Structure
 
@@ -283,6 +297,7 @@ EduSphere-Microservices/
 ├── academic-lms/
 ├── homework-assessment-service/
 ├── Learning-Materials/
+├── group-activities-service/
 ├── communication-student-support-service/
 ├── lms_monitoring_service/
 ├── api_gateway/
@@ -297,7 +312,7 @@ After startup, verify the platform quickly:
 
 1. Open gateway docs at http://localhost:8080/api-docs
 2. Check gateway health at http://localhost:8080/health
-3. Check service docs on ports 4001, 4002, 4003, 4004, 4005, and 4007
+3. Check service docs on ports 4001, 4002, 4003, 4004, 4005, 4006, and 4007
 4. Run gateway downstream health route at:
    - http://localhost:8080/api/v1/gateway/services/health
 

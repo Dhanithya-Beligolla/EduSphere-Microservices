@@ -1,0 +1,579 @@
+{
+  "info": {
+    "_postman_id": "8a40fd8e-5f3d-46f8-9bcd-7f8f03a6f3a1",
+    "name": "Group Activities Service - LMS",
+    "description": "Complete Postman collection for Group Activities microservice (groups, activities, submissions, peer evaluations, and results analytics).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health & Root",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Service Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 Group Management",
+      "item": [
+        {
+          "name": "Create Group Set",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const groupId = json && json.data && json.data.groupId;",
+                  "if (groupId) {",
+                  "  pm.collectionVariables.set('groupId', groupId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Grade 9 Science Explorers\",\n  \"classId\": \"{{classId}}\",\n  \"gradeId\": \"{{gradeId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"scope\": \"CLASS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/groups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Groups By Class",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/groups?classId={{classId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "groups"
+              ],
+              "query": [
+                {
+                  "key": "classId",
+                  "value": "{{classId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Member To Group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const membershipId = json && json.data && json.data.membershipId;",
+                  "if (membershipId) {",
+                  "  pm.collectionVariables.set('membershipId', membershipId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"role\": \"MEMBER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/groups/{{groupId}}/members",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "groups",
+                "{{groupId}}",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Member Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"LEADER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-memberships/{{membershipId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-memberships",
+                "{{membershipId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 Group Activity Management",
+      "item": [
+        {
+          "name": "Create Group Activity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "const activityId = json && json.data && json.data.activityId;",
+                  "if (activityId) {",
+                  "  pm.collectionVariables.set('activityId', activityId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activityTitle\": \"Group STEM Prototype\",\n  \"description\": \"Build and present a simple STEM prototype\",\n  \"classId\": \"{{classId}}\",\n  \"subjectId\": \"{{subjectId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"activityType\": \"PROJECT\",\n  \"groupMode\": \"MANUAL\",\n  \"peerEvaluationEnabled\": true,\n  \"markSplit\": {\n    \"groupScorePercent\": 70,\n    \"individualScorePercent\": 30\n  },\n  \"maxMarks\": 100,\n  \"dueAt\": \"2026-12-31T23:59:00Z\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-activities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-activities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Groups To Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"groupIds\": [\n    \"{{groupId}}\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-activities/{{activityId}}/assign-groups",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-activities",
+                "{{activityId}}",
+                "assign-groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-activities/{{activityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-activities",
+                "{{activityId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 Group Submissions",
+      "item": [
+        {
+          "name": "Submit Group Work",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activityId\": \"{{activityId}}\",\n  \"groupId\": \"{{groupId}}\",\n  \"classId\": \"{{classId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"textContent\": \"Our final report and summary findings.\",\n  \"attachments\": [\n    {\n      \"fileId\": \"FILE-001\",\n      \"fileName\": \"report.pdf\",\n      \"fileUrl\": \"https://example.com/report.pdf\"\n    }\n  ],\n  \"notes\": \"Submitted by group leader\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-submissions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-submissions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Submissions For Activity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-submissions/{{activityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-submissions",
+                "{{activityId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 Peer Evaluation",
+      "item": [
+        {
+          "name": "Submit Peer Evaluation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activityId\": \"{{activityId}}\",\n  \"groupId\": \"{{groupId}}\",\n  \"evaluateeStudentId\": \"{{evaluateeStudentId}}\",\n  \"score\": 8.5,\n  \"comment\": \"Strong contribution and timely delivery.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/peer-evaluations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "peer-evaluations"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Peer Evaluations For Activity",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/peer-evaluations/{{activityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "peer-evaluations",
+                "{{activityId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 Results & Analytics",
+      "item": [
+        {
+          "name": "Grade Group Activity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"groupId\": \"{{groupId}}\",\n  \"classId\": \"{{classId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"groupRawScore\": 84,\n  \"maxMarks\": 100,\n  \"feedback\": \"Well-structured solution with good teamwork.\",\n  \"individualScores\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/group-results/{{activityId}}/grade",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "group-results",
+                "{{activityId}}",
+                "grade"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Student Group Activity Feed",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/students/{{studentId}}/group-activities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "students",
+                "{{studentId}}",
+                "group-activities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Class Group Performance",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/{{apiPrefix}}/classes/{{classId}}/group-performance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "{{apiPrefix}}",
+                "classes",
+                "{{classId}}",
+                "group-performance"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4006"
+    },
+    {
+      "key": "apiPrefix",
+      "value": "api/v1"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "schoolId",
+      "value": "SCH-001"
+    },
+    {
+      "key": "academicYearId",
+      "value": "AY-2026"
+    },
+    {
+      "key": "gradeId",
+      "value": "G09"
+    },
+    {
+      "key": "classId",
+      "value": "CLS-G09-A"
+    },
+    {
+      "key": "subjectId",
+      "value": "SUB-SCI-01"
+    },
+    {
+      "key": "studentId",
+      "value": "student1"
+    },
+    {
+      "key": "evaluateeStudentId",
+      "value": "student2"
+    },
+    {
+      "key": "groupId",
+      "value": ""
+    },
+    {
+      "key": "membershipId",
+      "value": ""
+    },
+    {
+      "key": "activityId",
+      "value": ""
+    }
+  ]
+}

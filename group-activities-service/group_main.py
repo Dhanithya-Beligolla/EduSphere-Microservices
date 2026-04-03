@@ -9,9 +9,9 @@ This service owns:
   - Peer evaluations
   - Results and class-level analytics
 
-Port: 8003
-Swagger UI: http://localhost:8003/docs
-Redoc:      http://localhost:8003/redoc
+Port: 4006
+Swagger UI: http://localhost:4006/docs
+Redoc:      http://localhost:4006/redoc
 
 Via API Gateway:
   http://localhost:8000/group-activities/api/v1/...

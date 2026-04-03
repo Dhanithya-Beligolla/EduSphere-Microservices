@@ -22,7 +22,7 @@ Configured gateway prefixes:
 - `/materials` -> Learning Materials Service (`4004`)
 - `/monitoring` -> Monitoring & Administration Service (`4007`)
 - `/academic` -> Academic Management Service (`4003`)
-- `/groups` -> Group Activities Service (`4006`, placeholder)
+- `/groups` -> Group Activities Service (`4006`)
 - `/communication` -> Communication & Student Support Service (`4005`)
 
 ## API Gateway Port
@@ -81,6 +81,7 @@ curl http://localhost:8080/health
 curl http://localhost:8080/identity/health
 curl http://localhost:8080/assessment/health
 curl http://localhost:8080/materials/health
+curl http://localhost:8080/groups/health
 curl http://localhost:8080/communication/health
 curl http://localhost:8080/monitoring/health
 curl http://localhost:8080/academic/api/health
@@ -96,7 +97,6 @@ curl http://localhost:8080/api/v1/gateway/services/health
 
 Notes:
 - This gateway compose uses `host.docker.internal` to reach downstream services from inside the gateway container.
-- `groups` can report `DOWN` because it is currently a reserved route with no implemented backend in this repository.
 
 ## Root-Level Orchestration
 
@@ -106,7 +106,7 @@ From repository root, start all integrated services plus gateway with one comman
 docker compose up --build
 ```
 
-This launches identity, academic, homework-assessment, learning-materials, communication-student-support, monitoring, and api-gateway with their required databases.
+This launches identity, academic, homework-assessment, learning-materials, group-activities, communication-student-support, monitoring, and api-gateway with their required databases.
 
 ## Local Run (without Docker)
 

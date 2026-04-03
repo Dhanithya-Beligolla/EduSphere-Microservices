@@ -145,6 +145,25 @@ services:
     ports:
       - "4003:4003"
 
+  group-activities-service:
+    build:
+      context: ./group-activities-service
+    container_name: group-activities-service
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+      DB_NAME: group_activities_db
+      SERVICE_NAME: group-activities-service
+      SERVICE_VERSION: v1
+      ENVIRONMENT: development
+      SECRET_KEY: change_this_super_secret_key
+      ALGORITHM: HS256
+      API_GATEWAY_URL: http://lms-api-gateway:8080
+    ports:
+      - "4006:4006"
+
   communication-student-support-service:
     build:
       context: ./communication-student-support-service
@@ -187,6 +206,7 @@ services:
       - homework-assessment-service
       - lms-learning-materials
       - academic-lms-backend
+      - group-activities-service
       - communication-student-support-service
       - lms-monitoring-service
     environment:
@@ -201,7 +221,7 @@ services:
       LEARNING_MATERIALS_SERVICE_URL: http://lms-learning-materials:4004
       MONITORING_SERVICE_URL: http://lms-monitoring-service:4007
       ACADEMIC_SERVICE_URL: http://academic-lms-backend:4003
-      GROUP_SERVICE_URL: http://host.docker.internal:4006
+      GROUP_SERVICE_URL: http://group-activities-service:4006
       COMMUNICATION_SERVICE_URL: http://communication-student-support-service:4005
     ports:
       - "8080:8080"

@@ -14,6 +14,6 @@ RUN pip install --no-cache-dir -r group_requirements.txt
 # Copy application code
 COPY . .
 
-EXPOSE 8003
+EXPOSE 4006
 
-CMD ["uvicorn", "group_main:app", "--host", "0.0.0.0", "--port", "8003", "--reload"]
+CMD ["uvicorn", "group_main:app", "--host", "0.0.0.0", "--port", "4006", "--reload"]

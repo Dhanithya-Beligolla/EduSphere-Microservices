@@ -133,6 +133,26 @@
       ]
     },
     {
+      "name": "Group Activities Service (Proxy)",
+      "item": [
+        {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/groups/health"}},
+        {"name": "Create Group Set", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Grade 9 Science Explorers\",\n  \"classId\": \"{{classId}}\",\n  \"gradeId\": \"{{gradeId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"scope\": \"CLASS\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/groups"}},
+        {"name": "List Groups By Class", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/groups?classId={{classId}}"}},
+        {"name": "Add Member To Group", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"role\": \"MEMBER\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/groups/{{groupId}}/members"}},
+        {"name": "Update Member Role", "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"role\": \"LEADER\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-memberships/{{membershipId}}"}},
+        {"name": "Create Group Activity", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"activityTitle\": \"Group STEM Prototype\",\n  \"description\": \"Build and present a simple STEM prototype\",\n  \"classId\": \"{{classId}}\",\n  \"subjectId\": \"{{subjectId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"activityType\": \"PROJECT\",\n  \"groupMode\": \"MANUAL\",\n  \"peerEvaluationEnabled\": true,\n  \"markSplit\": {\n    \"groupScorePercent\": 70,\n    \"individualScorePercent\": 30\n  },\n  \"maxMarks\": 100,\n  \"dueAt\": \"2026-12-31T23:59:00Z\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-activities"}},
+        {"name": "Assign Groups To Activity", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"groupIds\": [\n    \"{{groupId}}\"\n  ]\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-activities/{{activityId}}/assign-groups"}},
+        {"name": "Get Activity Details", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/group-activities/{{activityId}}"}},
+        {"name": "Submit Group Work", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"activityId\": \"{{activityId}}\",\n  \"groupId\": \"{{groupId}}\",\n  \"classId\": \"{{classId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"textContent\": \"Our final report and summary findings.\",\n  \"attachments\": [\n    {\n      \"fileId\": \"FILE-001\",\n      \"fileName\": \"report.pdf\",\n      \"fileUrl\": \"https://example.com/report.pdf\"\n    }\n  ],\n  \"notes\": \"Submitted by group leader\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-submissions"}},
+        {"name": "Get Submissions For Activity", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/group-submissions/{{activityId}}"}},
+        {"name": "Submit Peer Evaluation", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"activityId\": \"{{activityId}}\",\n  \"groupId\": \"{{groupId}}\",\n  \"evaluateeStudentId\": \"{{evaluateeStudentId}}\",\n  \"score\": 8.5,\n  \"comment\": \"Strong contribution and timely delivery.\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/peer-evaluations"}},
+        {"name": "Get Peer Evaluations For Activity", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/peer-evaluations/{{activityId}}"}},
+        {"name": "Grade Group Activity", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"groupId\": \"{{groupId}}\",\n  \"classId\": \"{{classId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"groupRawScore\": 84,\n  \"maxMarks\": 100,\n  \"feedback\": \"Well-structured solution with good teamwork.\",\n  \"individualScores\": []\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-results/{{activityId}}/grade"}},
+        {"name": "Get Student Group Activity Feed", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/students/{{studentId}}/group-activities"}},
+        {"name": "Get Class Group Performance", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/classes/{{classId}}/group-performance"}}
+      ]
+    },
+    {
       "name": "Monitoring Service (Proxy)",
       "item": [
         {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/health"}},
@@ -170,6 +190,11 @@
     {"key": "submissionId", "value": "replace-submission-id"},
     {"key": "studentId", "value": "replace-student-id"},
     {"key": "classId", "value": "GRADE9-A"},
-    {"key": "materialId", "value": "replace-material-id"}
+    {"key": "materialId", "value": "replace-material-id"},
+    {"key": "schoolId", "value": "SCH-001"},
+    {"key": "evaluateeStudentId", "value": "replace-evaluatee-student-id"},
+    {"key": "groupId", "value": "replace-group-id"},
+    {"key": "membershipId", "value": "replace-membership-id"},
+    {"key": "activityId", "value": "replace-activity-id"}
   ]
 }

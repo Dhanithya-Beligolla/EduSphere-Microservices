@@ -1,18 +1,25 @@
 services:
+  mongodb:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27018:27017"
+    volumes:
+      - group_mongo_data:/data/db
+
   group-activities-service:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: group_activities_services
+    depends_on:
+      - mongodb
     ports:
-      - "8003:8003"
+      - "4006:4006"
     env_file:
       - .env
-    networks:
-      - lms_network
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
     restart: unless-stopped
 
-networks:
-  lms_network:
-    external: true
-    name: lms_network
+volumes:
+  group_mongo_data:
