@@ -80,6 +80,9 @@ It validates bearer tokens via the Identity Service verification endpoint.
 Migrations now run automatically when the service container starts.
 
 Manual migration command (optional):
+Migrations now run automatically when the service container starts.
+
+Manual migration command (optional):
 
 ```bash
 docker exec -it homework-assessment-service alembic upgrade head
