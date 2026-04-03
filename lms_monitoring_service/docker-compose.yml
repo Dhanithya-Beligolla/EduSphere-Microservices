@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: monitoring-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: monitoring_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5436:5432"
+    volumes:
+      - monitoring_pg_data:/var/lib/postgresql/data
+
+  lms-monitoring-service:
+    build: .
+    container_name: lms-monitoring-service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - "4007:4007"
+    volumes:
+      - .:/app/lms_monitoring_service
+      - /app/lms_monitoring_service/__pycache__
+    command: uvicorn lms_monitoring_service.monitoring_main:app --host 0.0.0.0 --port 4007 --reload
+
+volumes:
+  monitoring_pg_data:

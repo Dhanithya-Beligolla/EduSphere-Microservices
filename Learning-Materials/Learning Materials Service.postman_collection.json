@@ -1,0 +1,110 @@
+{
+  "info": {
+    "name": "Learning Materials Service",
+    "description": "Postman collection for Learning Materials service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health"
+      }
+    },
+    {
+      "name": "Readiness",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/ready"
+      }
+    },
+    {
+      "name": "List Materials",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/materials"
+      }
+    },
+    {
+      "name": "Create Material",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Grade 9 Science Notes\",\n  \"description\": \"Term 1 revision\",\n  \"resourceType\": \"PDF\",\n  \"subjectId\": \"SCI\",\n  \"gradeId\": \"G09\",\n  \"termId\": \"TERM-1\",\n  \"medium\": \"ENGLISH\",\n  \"tags\": [\"science\", \"revision\"],\n  \"fileId\": \"file-001\"\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/materials"
+      }
+    },
+    {
+      "name": "Search Materials",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/materials/search?q=science&gradeId=G09"
+      }
+    },
+    {
+      "name": "Get Material Versions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/materials/{{materialId}}/versions"
+      }
+    },
+    {
+      "name": "Get Visibility",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/v1/materials/{{materialId}}/visibility"
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4004"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "materialId",
+      "value": "replace-material-id"
+    }
+  ]
+}

@@ -60,3 +60,8 @@ Identity and user management microservice for the LMS platform.
 - `GET /api/v1/auth/users/:id`
 
 - `PATCH /api/v1/auth/users/:id/status`
+
+## Swagger Documentation
+
+- Swagger UI: `http://localhost:4001/api-docs/`
+- OpenAPI JSON: `http://localhost:4001/api-docs.json`
