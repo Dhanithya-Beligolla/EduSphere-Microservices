@@ -1,0 +1,200 @@
+{
+  "info": {
+    "name": "EduSphere API Gateway",
+    "description": "Comprehensive gateway collection with proxied requests grouped by microservice",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Gateway System",
+      "item": [
+        {
+          "name": "Gateway Health",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/health"}
+        },
+        {
+          "name": "Gateway Routes",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api/v1/gateway/routes"}
+        },
+        {
+          "name": "Downstream Services Health",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api/v1/gateway/services/health"}
+        },
+        {
+          "name": "Gateway Swagger UI",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api-docs"}
+        },
+        {
+          "name": "Gateway OpenAPI JSON",
+          "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/api-docs.json"}
+        }
+      ]
+    },
+    {
+      "name": "Identity Service (Proxy)",
+      "item": [
+        {"name": "Health Check", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/identity/health"}},
+        {"name": "Login", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"emailOrUsername\": \"{{superadminLogin}}\",\n  \"password\": \"{{superadminPassword}}\"\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/login"}},
+        {"name": "Register Admin", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"firstName\": \"System\",\n  \"lastName\": \"Admin\",\n  \"email\": \"admin1@lms.com\",\n  \"username\": \"admin1\",\n  \"password\": \"Admin@12345\",\n  \"phone\": \"0711234567\",\n  \"role\": \"ADMIN\"\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/register"}},
+        {"name": "Register Principal", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"firstName\": \"Kamal\",\n  \"lastName\": \"Perera\",\n  \"email\": \"principal1@school.com\",\n  \"username\": \"principal1\",\n  \"password\": \"Principal@123\",\n  \"phone\": \"0771234567\",\n  \"role\": \"PRINCIPAL\"\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/register"}},
+        {"name": "Register Subject Teacher", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"firstName\": \"Nimal\",\n  \"lastName\": \"Silva\",\n  \"email\": \"teacher1@school.com\",\n  \"username\": \"teacher1\",\n  \"password\": \"Teacher@123\",\n  \"phone\": \"0755555555\",\n  \"role\": \"SUBJECT_TEACHER\"\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/register"}},
+        {"name": "Register Student", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"firstName\": \"Sahan\",\n  \"lastName\": \"Fernando\",\n  \"email\": \"student1@school.com\",\n  \"username\": \"student1\",\n  \"password\": \"Student@123\",\n  \"phone\": \"0766666666\",\n  \"role\": \"STUDENT\"\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/register"}},
+        {"name": "Register Parent", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"firstName\": \"Malini\",\n  \"lastName\": \"Fernando\",\n  \"email\": \"parent1@home.com\",\n  \"username\": \"parent1\",\n  \"password\": \"Parent@123\",\n  \"phone\": \"0787777777\",\n  \"role\": \"PARENT\"\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/register"}},
+        {"name": "Get Current User (Me)", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/identity/api/v1/auth/me"}},
+        {"name": "Verify Token", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/identity/api/v1/auth/verify"}},
+        {"name": "List Users", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/identity/api/v1/auth/users"}},
+        {"name": "Get User By ID", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/identity/api/v1/auth/users/{{userId}}"}},
+        {"name": "Deactivate User", "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"isActive\": false\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/users/{{userId}}/status"}},
+        {"name": "Activate User", "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"isActive\": true\n}"}, "url": "{{baseUrl}}/identity/api/v1/auth/users/{{userId}}/status"}}
+      ]
+    },
+    {
+      "name": "Academic Service (Proxy)",
+      "item": [
+        {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/health"}},
+        {"name": "Get Academic Years", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/academic-years"}},
+        {"name": "Get Active Academic Year", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/academic-years/active"}},
+        {"name": "Create Academic Year", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"2026\",\n  \"startDate\": \"2026-01-01\",\n  \"endDate\": \"2026-12-31\"\n}"}, "url": "{{baseUrl}}/academic/api/academic-years"}},
+        {"name": "Activate Academic Year", "request": {"method": "PATCH", "header": [], "url": "{{baseUrl}}/academic/api/academic-years/{{academicYearId}}/activate"}},
+        {"name": "Delete Academic Year", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/academic/api/academic-years/{{academicYearId}}"}},
+        {"name": "Get Grades", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/grades"}},
+        {"name": "Create Grade", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Grade 9\",\n  \"code\": \"G09\"\n}"}, "url": "{{baseUrl}}/academic/api/grades"}},
+        {"name": "Update Grade", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Grade 9 Updated\"\n}"}, "url": "{{baseUrl}}/academic/api/grades/{{gradeId}}"}},
+        {"name": "Delete Grade", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/academic/api/grades/{{gradeId}}"}},
+        {"name": "Get Sections", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/sections"}},
+        {"name": "Create Section", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"A\",\n  \"gradeId\": \"{{gradeId}}\"\n}"}, "url": "{{baseUrl}}/academic/api/sections"}},
+        {"name": "Update Section", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"B\"\n}"}, "url": "{{baseUrl}}/academic/api/sections/{{sectionId}}"}},
+        {"name": "Delete Section", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/academic/api/sections/{{sectionId}}"}},
+        {"name": "Get Subjects", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/subjects"}},
+        {"name": "Get Subject By ID", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/subjects/{{subjectId}}"}},
+        {"name": "Create Subject", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Science\",\n  \"code\": \"SCI\"\n}"}, "url": "{{baseUrl}}/academic/api/subjects"}},
+        {"name": "Update Subject", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"General Science\"\n}"}, "url": "{{baseUrl}}/academic/api/subjects/{{subjectId}}"}},
+        {"name": "Delete Subject", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/academic/api/subjects/{{subjectId}}"}},
+        {"name": "Get Enrollments", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/enrollments"}},
+        {"name": "Get Student Enrollment", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/enrollments/student/{{studentId}}"}},
+        {"name": "Enroll Student", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"gradeId\": \"{{gradeId}}\",\n  \"sectionId\": \"{{sectionId}}\"\n}"}, "url": "{{baseUrl}}/academic/api/enrollments"}},
+        {"name": "Transfer Student", "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"toGradeId\": \"{{gradeId}}\",\n  \"toSectionId\": \"{{sectionId}}\"\n}"}, "url": "{{baseUrl}}/academic/api/enrollments/{{enrollmentId}}/transfer"}},
+        {"name": "Promote Students", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"fromGradeId\": \"{{gradeId}}\",\n  \"toGradeId\": \"{{nextGradeId}}\"\n}"}, "url": "{{baseUrl}}/academic/api/enrollments/promote"}},
+        {"name": "Get Teacher Assignments", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/teacher-assignments"}},
+        {"name": "Get Teaching Load", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/teacher-assignments/teaching-load/{{teacherId}}"}},
+        {"name": "Create Teacher Assignment", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"subjectId\": \"{{subjectId}}\",\n  \"gradeId\": \"{{gradeId}}\"\n}"}, "url": "{{baseUrl}}/academic/api/teacher-assignments"}},
+        {"name": "Delete Teacher Assignment", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/academic/api/teacher-assignments/{{teacherAssignmentId}}"}},
+        {"name": "Get Timetable", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/academic/api/timetable"}},
+        {"name": "Create Timetable Slot", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"gradeId\": \"{{gradeId}}\",\n  \"sectionId\": \"{{sectionId}}\",\n  \"subjectId\": \"{{subjectId}}\",\n  \"teacherId\": \"{{teacherId}}\",\n  \"dayOfWeek\": \"MONDAY\",\n  \"startTime\": \"08:00\",\n  \"endTime\": \"08:40\"\n}"}, "url": "{{baseUrl}}/academic/api/timetable"}},
+        {"name": "Create Timetable Slots Bulk", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"slots\": []\n}"}, "url": "{{baseUrl}}/academic/api/timetable/bulk"}},
+        {"name": "Update Timetable Slot", "request": {"method": "PUT", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"room\": \"Room 12\"\n}"}, "url": "{{baseUrl}}/academic/api/timetable/{{slotId}}"}},
+        {"name": "Delete Timetable Slot", "request": {"method": "DELETE", "header": [], "url": "{{baseUrl}}/academic/api/timetable/{{slotId}}"}},
+        {"name": "Publish Timetable", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"gradeId\": \"{{gradeId}}\",\n  \"sectionId\": \"{{sectionId}}\"\n}"}, "url": "{{baseUrl}}/academic/api/timetable/publish"}}
+      ]
+    },
+    {
+      "name": "Homework & Assessment Service (Proxy)",
+      "item": [
+        {"name": "Health Check", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/assessment/health"}},
+        {"name": "Create Assignment", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}, {"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Science Homework 01\",\n  \"description\": \"Complete the worksheet on ecosystems.\",\n  \"type\": \"HOMEWORK\",\n  \"class_id\": \"{{classId}}\",\n  \"subject_id\": \"SCIENCE-01\",\n  \"publish_at\": \"2026-03-29T10:00:00Z\",\n  \"due_at\": \"2026-04-02T23:59:59Z\",\n  \"total_marks\": 20,\n  \"allow_late_submission\": true,\n  \"max_attempts\": 2,\n  \"language_medium\": \"ENGLISH\"\n}"}, "url": "{{baseUrl}}/assessment/api/v1/assignments"}},
+        {"name": "List Assignments (Teacher)", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/assignments"}},
+        {"name": "Get Assignment By ID", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/assignments/{{assignmentId}}"}},
+        {"name": "Update Assignment", "request": {"method": "PATCH", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}, {"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"description\": \"Complete the worksheet on ecosystems and food chains.\",\n  \"total_marks\": 25,\n  \"max_attempts\": 3\n}"}, "url": "{{baseUrl}}/assessment/api/v1/assignments/{{assignmentId}}"}},
+        {"name": "Publish Assignment", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/assignments/{{assignmentId}}/publish"}},
+        {"name": "List Assignments (Student)", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{studentAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/assignments"}},
+        {"name": "Submit Assignment (Text Only)", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{studentAccessToken}}"}], "body": {"mode": "formdata", "formdata": [{"key": "assignment_id", "value": "{{assignmentId}}", "type": "text"}, {"key": "submission_text", "value": "Here are my answers for the science homework.", "type": "text"}]}, "url": "{{baseUrl}}/assessment/api/v1/submissions"}},
+        {"name": "Submit Assignment (With File)", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{studentAccessToken}}"}], "body": {"mode": "formdata", "formdata": [{"key": "assignment_id", "value": "{{assignmentId}}", "type": "text"}, {"key": "submission_text", "value": "Attached is my worksheet file.", "type": "text"}, {"key": "file", "type": "file", "value": ""}]}, "url": "{{baseUrl}}/assessment/api/v1/submissions"}},
+        {"name": "List Assignment Submissions", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/submissions/assignment/{{assignmentId}}"}},
+        {"name": "List Student Submissions", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{studentAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/submissions/student/{{studentId}}"}},
+        {"name": "Grade Submission", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}, {"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"marks_obtained\": 18,\n  \"grade\": \"A-\",\n  \"feedback_summary\": \"Good work. Improve the explanation in question 3.\"\n}"}, "url": "{{baseUrl}}/assessment/api/v1/grading/submissions/{{submissionId}}"}},
+        {"name": "Get Gradebook", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/grading/classes/{{classId}}/gradebook"}},
+        {"name": "Publish Result", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{teacherAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/results/{{submissionId}}/publish"}},
+        {"name": "List Student Results", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{studentAccessToken}}"}], "url": "{{baseUrl}}/assessment/api/v1/results/student/{{studentId}}"}}
+      ]
+    },
+    {
+      "name": "Learning Materials Service (Proxy)",
+      "item": [
+        {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/materials/health"}},
+        {"name": "Readiness", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/materials/ready"}},
+        {"name": "List Materials", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/materials/api/v1/materials"}},
+        {"name": "Create Material", "request": {"method": "POST", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Grade 9 Science Notes\",\n  \"description\": \"Term 1 revision\",\n  \"resourceType\": \"PDF\",\n  \"subjectId\": \"SCI\",\n  \"gradeId\": \"G09\",\n  \"termId\": \"TERM-1\",\n  \"medium\": \"ENGLISH\",\n  \"tags\": [\"science\", \"revision\"],\n  \"fileId\": \"file-001\"\n}"}, "url": "{{baseUrl}}/materials/api/v1/materials"}},
+        {"name": "Search Materials", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/materials/api/v1/materials/search?q=science&gradeId=G09"}},
+        {"name": "Get Material Versions", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/materials/api/v1/materials/{{materialId}}/versions"}},
+        {"name": "Get Visibility", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{token}}"}], "url": "{{baseUrl}}/materials/api/v1/materials/{{materialId}}/visibility"}}
+      ]
+    },
+    {
+      "name": "Communication Service (Proxy)",
+      "item": [
+        {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/communication/health"}},
+        {"name": "Create Notice", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"title\": \"Exam Reminder\",\n  \"content\": \"Term test starts next week\",\n  \"audience\": \"ALL\",\n  \"author_id\": \"P001\",\n  \"author_role\": \"Principal\"\n}"}, "url": "{{baseUrl}}/communication/api/v1/notices"}},
+        {"name": "Get Notices", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/communication/api/v1/notices"}},
+        {"name": "Send Message", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"sender_id\": \"T001\",\n  \"receiver_id\": \"S001\",\n  \"content\": \"Please submit your assignment today\"\n}"}, "url": "{{baseUrl}}/communication/api/v1/messages"}},
+        {"name": "Get Conversation Messages", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/communication/api/v1/conversations/CONV_SAMPLE/messages"}},
+        {"name": "Create Alert", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"user_id\": \"S001\",\n  \"type\": \"ASSIGNMENT\",\n  \"title\": \"Assignment Due\",\n  \"message\": \"Math assignment is due tomorrow\",\n  \"priority\": \"HIGH\"\n}"}, "url": "{{baseUrl}}/communication/api/v1/alerts"}},
+        {"name": "Get User Alerts", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/communication/api/v1/users/S001/alerts"}},
+        {"name": "Create Support Case", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"student_id\": \"S001\",\n  \"subject\": \"Wellbeing Support\",\n  \"description\": \"Student requested counselling session\",\n  \"assigned_staff_id\": \"C001\"\n}"}, "url": "{{baseUrl}}/communication/api/v1/support-cases"}}
+      ]
+    },
+    {
+      "name": "Group Activities Service (Proxy)",
+      "item": [
+        {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/groups/health"}},
+        {"name": "Create Group Set", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Grade 9 Science Explorers\",\n  \"classId\": \"{{classId}}\",\n  \"gradeId\": \"{{gradeId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"scope\": \"CLASS\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/groups"}},
+        {"name": "List Groups By Class", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/groups?classId={{classId}}"}},
+        {"name": "Add Member To Group", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"studentId\": \"{{studentId}}\",\n  \"role\": \"MEMBER\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/groups/{{groupId}}/members"}},
+        {"name": "Update Member Role", "request": {"method": "PATCH", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"role\": \"LEADER\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-memberships/{{membershipId}}"}},
+        {"name": "Create Group Activity", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"activityTitle\": \"Group STEM Prototype\",\n  \"description\": \"Build and present a simple STEM prototype\",\n  \"classId\": \"{{classId}}\",\n  \"subjectId\": \"{{subjectId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"academicYearId\": \"{{academicYearId}}\",\n  \"activityType\": \"PROJECT\",\n  \"groupMode\": \"MANUAL\",\n  \"peerEvaluationEnabled\": true,\n  \"markSplit\": {\n    \"groupScorePercent\": 70,\n    \"individualScorePercent\": 30\n  },\n  \"maxMarks\": 100,\n  \"dueAt\": \"2026-12-31T23:59:00Z\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-activities"}},
+        {"name": "Assign Groups To Activity", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"groupIds\": [\n    \"{{groupId}}\"\n  ]\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-activities/{{activityId}}/assign-groups"}},
+        {"name": "Get Activity Details", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/group-activities/{{activityId}}"}},
+        {"name": "Submit Group Work", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"activityId\": \"{{activityId}}\",\n  \"groupId\": \"{{groupId}}\",\n  \"classId\": \"{{classId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"textContent\": \"Our final report and summary findings.\",\n  \"attachments\": [\n    {\n      \"fileId\": \"FILE-001\",\n      \"fileName\": \"report.pdf\",\n      \"fileUrl\": \"https://example.com/report.pdf\"\n    }\n  ],\n  \"notes\": \"Submitted by group leader\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-submissions"}},
+        {"name": "Get Submissions For Activity", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/group-submissions/{{activityId}}"}},
+        {"name": "Submit Peer Evaluation", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"activityId\": \"{{activityId}}\",\n  \"groupId\": \"{{groupId}}\",\n  \"evaluateeStudentId\": \"{{evaluateeStudentId}}\",\n  \"score\": 8.5,\n  \"comment\": \"Strong contribution and timely delivery.\"\n}"}, "url": "{{baseUrl}}/groups/api/v1/peer-evaluations"}},
+        {"name": "Get Peer Evaluations For Activity", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/peer-evaluations/{{activityId}}"}},
+        {"name": "Grade Group Activity", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{accessToken}}"}], "body": {"mode": "raw", "raw": "{\n  \"groupId\": \"{{groupId}}\",\n  \"classId\": \"{{classId}}\",\n  \"schoolId\": \"{{schoolId}}\",\n  \"groupRawScore\": 84,\n  \"maxMarks\": 100,\n  \"feedback\": \"Well-structured solution with good teamwork.\",\n  \"individualScores\": []\n}"}, "url": "{{baseUrl}}/groups/api/v1/group-results/{{activityId}}/grade"}},
+        {"name": "Get Student Group Activity Feed", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/students/{{studentId}}/group-activities"}},
+        {"name": "Get Class Group Performance", "request": {"method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}], "url": "{{baseUrl}}/groups/api/v1/classes/{{classId}}/group-performance"}}
+      ]
+    },
+    {
+      "name": "Monitoring Service (Proxy)",
+      "item": [
+        {"name": "Health", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/health"}},
+        {"name": "Principal Dashboard", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/dashboards/principal"}},
+        {"name": "Sectional Head Dashboard", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/dashboards/sectional-head?sectionId=SEC-JUNIOR"}},
+        {"name": "Assignment Completion Report", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/reports/assignment-completion?termId=TERM-1"}},
+        {"name": "Academic Risk Report", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/reports/academic-risk?gradeId=G09"}},
+        {"name": "Material Usage Report", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/reports/material-usage?subjectId=SCI"}},
+        {"name": "Get KPIs", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/kpis"}},
+        {"name": "Get Interventions", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/interventions"}},
+        {"name": "Get Risk Rules", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/risk-rules"}},
+        {"name": "Get User Activity Audit", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/monitoring/api/v1/audit-views/user-activity?userId=TCH-230"}}
+      ]
+    }
+  ],
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8080"},
+    {"key": "superadminLogin", "value": "superadmin"},
+    {"key": "superadminPassword", "value": "Super@12345"},
+    {"key": "accessToken", "value": ""},
+    {"key": "teacherAccessToken", "value": ""},
+    {"key": "studentAccessToken", "value": ""},
+    {"key": "token", "value": ""},
+    {"key": "userId", "value": "replace-user-id"},
+    {"key": "academicYearId", "value": "replace-academic-year-id"},
+    {"key": "gradeId", "value": "replace-grade-id"},
+    {"key": "nextGradeId", "value": "replace-next-grade-id"},
+    {"key": "sectionId", "value": "replace-section-id"},
+    {"key": "subjectId", "value": "replace-subject-id"},
+    {"key": "teacherId", "value": "replace-teacher-id"},
+    {"key": "enrollmentId", "value": "replace-enrollment-id"},
+    {"key": "teacherAssignmentId", "value": "replace-teacher-assignment-id"},
+    {"key": "slotId", "value": "replace-slot-id"},
+    {"key": "assignmentId", "value": "replace-assignment-id"},
+    {"key": "submissionId", "value": "replace-submission-id"},
+    {"key": "studentId", "value": "replace-student-id"},
+    {"key": "classId", "value": "GRADE9-A"},
+    {"key": "materialId", "value": "replace-material-id"},
+    {"key": "schoolId", "value": "SCH-001"},
+    {"key": "evaluateeStudentId", "value": "replace-evaluatee-student-id"},
+    {"key": "groupId", "value": "replace-group-id"},
+    {"key": "membershipId", "value": "replace-membership-id"},
+    {"key": "activityId", "value": "replace-activity-id"}
+  ]
+}

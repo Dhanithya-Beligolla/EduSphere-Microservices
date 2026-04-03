@@ -1,0 +1,10 @@
+services:
+  communication-student-support-service:
+    build: .
+    container_name: communication-student-support-service
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "4005:4005"
+    command: uvicorn communication_main:app --host 0.0.0.0 --port 4005 --reload

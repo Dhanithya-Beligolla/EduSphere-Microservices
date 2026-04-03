@@ -1,0 +1,627 @@
+{
+  "info": {
+    "_postman_id": "92ba3cfb-cedb-4dc6-80e2-202412342e14",
+    "name": "Homework Assessment Service - LMS (Corrected Routes)",
+    "description": "Corrected Postman collection for LMS Homework & Assessment FastAPI service with cleaned route prefixes and Identity Service integration.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33247517",
+    "_collection_link": "https://go.postman.co/collection/33247517-92ba3cfb-cedb-4dc6-80e2-202412342e14?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/health",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login as Teacher (Identity Service)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Teacher login status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "if (json && json.data) {",
+              "    if (json.data.accessToken) {",
+              "        pm.collectionVariables.set('teacherAccessToken', json.data.accessToken);",
+              "    }",
+              "    if (json.data.user && json.data.user.id) {",
+              "        pm.collectionVariables.set('teacherId', json.data.user.id);",
+              "    }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emailOrUsername\": \"{{teacherLogin}}\",\n  \"password\": \"{{teacherPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{identityBaseUrl}}/{{identityApiPrefix}}/auth/login",
+          "host": [
+            "{{identityBaseUrl}}"
+          ],
+          "path": [
+            "{{identityApiPrefix}}",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login as Student (Identity Service)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Student login status is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "if (json && json.data) {",
+              "    if (json.data.accessToken) {",
+              "        pm.collectionVariables.set('studentAccessToken', json.data.accessToken);",
+              "    }",
+              "    if (json.data.user && json.data.user.id) {",
+              "        pm.collectionVariables.set('studentId', json.data.user.id);",
+              "    }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"emailOrUsername\": \"{{studentLogin}}\",\n  \"password\": \"{{studentPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{identityBaseUrl}}/{{identityApiPrefix}}/auth/login",
+          "host": [
+            "{{identityBaseUrl}}"
+          ],
+          "path": [
+            "{{identityApiPrefix}}",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Assignment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Assignment created', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "if (json && json.data && json.data.id) {",
+              "    pm.collectionVariables.set('assignmentId', json.data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Science Homework 01\",\n  \"description\": \"Complete the worksheet on ecosystems.\",\n  \"type\": \"HOMEWORK\",\n  \"class_id\": \"{{classId}}\",\n  \"subject_id\": \"SCIENCE-01\",\n  \"publish_at\": \"2026-03-29T10:00:00Z\",\n  \"due_at\": \"2026-04-02T23:59:59Z\",\n  \"total_marks\": 20,\n  \"allow_late_submission\": true,\n  \"max_attempts\": 2,\n  \"language_medium\": \"ENGLISH\"\n}"
+        },
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/assignments",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "assignments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Assignments (Teacher)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/assignments",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "assignments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Assignment By ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/assignments/{{assignmentId}}",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "assignments",
+            "{{assignmentId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Assignment",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"Complete the worksheet on ecosystems and food chains.\",\n  \"total_marks\": 25,\n  \"max_attempts\": 3\n}"
+        },
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/assignments/{{assignmentId}}",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "assignments",
+            "{{assignmentId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Publish Assignment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/assignments/{{assignmentId}}/publish",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "assignments",
+            "{{assignmentId}}",
+            "publish"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Assignments (Student)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{studentAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/assignments",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "assignments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Submit Assignment (Text Only)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Submission created', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "if (json && json.data && json.data.id) {",
+              "    pm.collectionVariables.set('submissionId', json.data.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{studentAccessToken}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "assignment_id",
+              "value": "{{assignmentId}}",
+              "type": "text"
+            },
+            {
+              "key": "submission_text",
+              "value": "Here are my answers for the science homework.",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/submissions",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "submissions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Submit Assignment (With File)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{studentAccessToken}}"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "assignment_id",
+              "value": "{{assignmentId}}",
+              "type": "text"
+            },
+            {
+              "key": "submission_text",
+              "value": "Attached is my worksheet file.",
+              "type": "text"
+            },
+            {
+              "key": "file",
+              "type": "file",
+              "value": ""
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/submissions",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "submissions"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Assignment Submissions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/submissions/assignment/{{assignmentId}}",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "submissions",
+            "assignment",
+            "{{assignmentId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Student Submissions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{studentAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/submissions/student/{{studentId}}",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "submissions",
+            "student",
+            "{{studentId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Grade Submission",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"marks_obtained\": 18,\n  \"grade\": \"A-\",\n  \"feedback_summary\": \"Good work. Improve the explanation in question 3.\"\n}"
+        },
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/grading/submissions/{{submissionId}}",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "grading",
+            "submissions",
+            "{{submissionId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Gradebook",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/grading/classes/{{classId}}/gradebook",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "grading",
+            "classes",
+            "{{classId}}",
+            "gradebook"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Publish Result",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{teacherAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/results/{{submissionId}}/publish",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "results",
+            "{{submissionId}}",
+            "publish"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "List Student Results",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{studentAccessToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{assessmentBaseUrl}}/{{assessmentApiPrefix}}/results/student/{{studentId}}",
+          "host": [
+            "{{assessmentBaseUrl}}"
+          ],
+          "path": [
+            "{{assessmentApiPrefix}}",
+            "results",
+            "student",
+            "{{studentId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "identityBaseUrl",
+      "value": "http://localhost:4001"
+    },
+    {
+      "key": "identityApiPrefix",
+      "value": "/api/v1"
+    },
+    {
+      "key": "assessmentBaseUrl",
+      "value": "http://localhost:4002"
+    },
+    {
+      "key": "assessmentApiPrefix",
+      "value": "/api/v1"
+    },
+    {
+      "key": "teacherLogin",
+      "value": "teacher1"
+    },
+    {
+      "key": "teacherPassword",
+      "value": "Teacher@123"
+    },
+    {
+      "key": "studentLogin",
+      "value": "student1"
+    },
+    {
+      "key": "studentPassword",
+      "value": "Student@123"
+    },
+    {
+      "key": "teacherAccessToken",
+      "value": ""
+    },
+    {
+      "key": "studentAccessToken",
+      "value": ""
+    },
+    {
+      "key": "teacherId",
+      "value": ""
+    },
+    {
+      "key": "studentId",
+      "value": ""
+    },
+    {
+      "key": "assignmentId",
+      "value": ""
+    },
+    {
+      "key": "submissionId",
+      "value": ""
+    },
+    {
+      "key": "classId",
+      "value": "GRADE9-A"
+    }
+  ]
+}

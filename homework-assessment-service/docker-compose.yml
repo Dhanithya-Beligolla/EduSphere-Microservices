@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: assessment-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: assessment_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - assessment_pg_data:/var/lib/postgresql/data
+
+  homework-assessment-service:
+    build: .
+    container_name: homework-assessment-service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    ports:
+      - "4002:4002"
+    volumes:
+      - .:/app
+      - /app/__pycache__
+      - ./uploads:/app/uploads
+    command: /app/scripts/start.sh
+
+volumes:
+  assessment_pg_data:
