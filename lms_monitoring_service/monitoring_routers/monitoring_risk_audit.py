@@ -116,7 +116,69 @@ async def deactivate_risk_rule(ruleId: str, db: Session = Depends(get_db)):
     )
 
 
+@router.put(
+    "/risk-rules/{ruleId}",
+    summary="Update an existing risk rule",
+    description=(
+        "Updates an existing risk-detection rule by its ID. You must provide "
+        "the updated name, condition, riskLevel, and active status."
+    ),
+)
+async def update_risk_rule(ruleId: str, body: RiskRuleRequest, db: Session = Depends(get_db)):
+    """Update all fields of a risk rule, or 404 if not found."""
+    rule = db.query(RiskRule).filter(RiskRule.rule_id == ruleId).first()
+    if not rule:
+        return JSONResponse(
+            status_code=404,
+            content=error(f"Risk rule '{ruleId}' not found", "RISK_RULE_NOT_FOUND"),
+        )
+    
+    rule.name = body.name
+    rule.condition = body.condition
+    rule.risk_level = body.riskLevel
+    rule.active = body.active
+    
+    db.commit()
+    db.refresh(rule)
+    return success(_risk_rule_to_dict(rule))
+
+
 # ── Audit Logs ───────────────────────────────────────────────────────────────
+
+@router.get(
+    "/audit-views",
+    summary="View entire audit trail",
+    description=(
+        "Returns every audit log entry in the system, ordered by "
+        "timestamp (newest first)."
+    ),
+)
+async def list_all_audit_logs(db: Session = Depends(get_db)):
+    """Return all audit log entries."""
+    logs = db.query(AuditLog).order_by(AuditLog.timestamp.desc()).all()
+    return success([_audit_to_dict(item) for item in logs])
+
+
+@router.get(
+    "/audit-logs",
+    summary="Get all audit logs (alias)",
+    description="Returns all audit log entries, similar to /audit-views.",
+)
+async def list_audit_logs_new(db: Session = Depends(get_db)):
+    """Alias for listing all audit logs."""
+    logs = db.query(AuditLog).order_by(AuditLog.timestamp.desc()).all()
+    return success([_audit_to_dict(item) for item in logs])
+
+
+@router.get(
+    "/test",
+    summary="Test connectivity",
+    description="Simple endpoint to test if the monitoring service is responding.",
+)
+async def test_endpoint():
+    """Simple test endpoint."""
+    return success({"status": "ok", "message": "Monitoring service is reachable"})
+
 
 @router.get(
     "/audit-views/user-activity",
